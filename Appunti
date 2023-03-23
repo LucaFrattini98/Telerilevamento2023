@@ -1,0 +1,66 @@
+2 + 3
+var <- 2 + 3
+var
+var2 <- 5 + 4
+var2
+
+var + var2
+sum(var, var2)
+
+var3 <- sum(var, var2)
+var3
+
+batterio <- c(10, 20, 30, 40, 50, 60)
+dbh <- c(20, 50, 100, 150, 200, 250)
+
+plot(dbh, batterio, main = "alberi vs. batteri", pch = 19, cex =5, col = "salmon" )
+
+# main dà il titolo al grafico (scritto tra parentesi), con pch scelgo il simbolo 
+# (ogni numero rappresenta un simbolo diverso) con cex imposto la dimensione del simbolo. 
+# con col imposto il colore de simbolo scrivendo in inlgese tra parentesi.
+
+install.packages("raster")
+library(raster)
+setwd("C:/Lab/")
+l2011 <- brick("p224r63_2011_masked.grd")
+plot(l2011[[4]])
+
+# visualizzo una immagine con i colori naturali associando le bande landsat a quelle rgb
+plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")
+
+# associo la banda NIR landsat (numero 4) al rosso della banda rgb, così posso vedere l'infrarosso
+plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
+
+# associo l'infrarosso al colore verde
+plotRGB(l2011, r=3, g=4, b=2, stretch="Lin")
+
+# associo l'infrarosso al blu
+plotRGB(l2011, r=3, g=2, b=4, stretch="Lin")
+
+# stretch=Lin serve a streccciare i valori in maniera lineare, serve a visulaizzare meglio l'immagine
+
+
+l1988 <- brick("p224r63_1988_masked.grd")
+
+plot(l1988[[4]])
+
+# divido l'immagine in due righe in modo da visualizzare le due immagini contemporanemente (multiframe)
+par(mfrow=c(2,1)) # mf sta per multiframe, 2 indica il numero di righe, 1 il numero di colonne
+plotRGB(l1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
+
+# posso scrivere il codice anche senza inserire le lettere r, g, b
+plotRGB(l2011, 4, 3, 2, stretch="Lin")
+
+# chiudo l'immagine
+dev.off()
+
+
+# stretch=Hist è uno stretch per istogrammi 
+
+
+par(mfrow=c(2,2))
+plotRGB(l1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(l1988, r=4, g=3, b=2, stretch="Hist")
+plotRGB(l2011, r=4, g=3, b=2, stretch="Hist")
