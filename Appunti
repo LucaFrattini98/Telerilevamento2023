@@ -64,3 +64,110 @@ plotRGB(l1988, r=4, g=3, b=2, stretch="Lin")
 plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
 plotRGB(l1988, r=4, g=3, b=2, stretch="Hist")
 plotRGB(l2011, r=4, g=3, b=2, stretch="Hist")
+
+
+# 30/03
+
+library(raster)
+setwd("C:/Lab/")
+
+l2006 <- brick("defor2_.png")
+l2006 <- brick("defor2_.png")
+
+plot(l2006)
+plotRGB(l2006$defor2__1, 1, 2, 3, stretch="Lin")
+
+l1992 <- brick("defor1_.png")
+l1992
+
+plot(l1992)
+plotRGB(l1992, 1, 2, 3, stretch="Lin")
+plotRGB(l2006, 1, 2, 3, stretch="Lin")
+
+par(mfrow=c(2,1))
+plotRGB(l1992, 1, 2, 3, stretch="Lin")
+plotRGB(l2006, 1, 2, 3, stretch="Lin")
+
+l2006 <- brick("defor2_.png")
+
+# put the two images beside each other
+
+par(mfrow=c(1,2)) # invece di c(2,1) come prima
+plotRGB(l1992, 1, 2, 3, stretch="Lin")
+plotRGB(l2006, 1, 2, 3, stretch="Lin")
+
+
+# DVI Difference Vegetation Index
+
+dvi1992 = l1992[[1]] - l1992[[2]] # unam maggiore differenza nella dvi indica una distruzione della foresta
+
+cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100) # specifying a color scheme
+plot(dvi1992, col=cl)
+
+
+dvi2006 = l2006[[1]] - l2006[[2]]
+plot(dvi2006, col=cl)
+
+
+# confronto multitemporale dvi 1992 - dvi 2006
+
+difdvi = dvi1992 - dvi2006
+
+cld = colorRampPalette(c('blue','white','red'))(100)
+
+plot(difdvi, col=cld)
+
+dev.off()
+
+
+# in una immagine ad 8bit il Range DVI (8 bit): -255 a 255
+# Range DVI (16 bit): -65535 a 65535 non posso fare confronti dvi fra due immagini con bit diversi
+# per ovviare a questo problema possiamo standardizzare il dvi (NDVI) normalized dvi, che varia sempre tra 1 e -1
+# quindi ndvi possiamo usarlo sempre per fare confronti tra immagini con bit diversi
+
+ndvi1992 = dvi1992/(l1992[[1]] + l1992[[2]])
+
+plot(ndvi1992, col=cl)
+
+
+ndvi2006 = dvi2006/(l2006[[1]] + l2006[[2]])
+
+plot(ndvi2006, col=cl)
+
+difndvi = ndvi1992 - ndvi2006
+plot(difndvi, col= cld)
+
+# la risoluzione di una immagine è composta da 3 tipologie:
+# risoluzione spaziale = dimensione pixel
+# risoluzione spettrale = numero di bande
+# risoluzione radiometrica = numero di bit di quella immagine
+
+
+# Multiframe with NDVI1992 on top of the NDVI2006 image
+par(mfrow=c(2,1))
+plot(ndvi1992, col=cl)
+plot(ndvi2006, col=cl)
+
+
+
+setwd("C:/Lab/Greenland")
+
+lst_2000 <- raster("lst_2000.tif") # la funzione raster importa bande singole e non tutti insieme come la funzione brick
+plot(lst_2000)
+
+dev.off()
+
+# importing all the data
+lst_2005 <- raster("lst_2005.tif")
+lst_2010 <- raster("lst_2010.tif")
+lst_2015 <- raster("lst_2015.tif")
+
+# per vedere che siano state caricate tutte usiamo questa funzione che ci fa la lista di tutti gli oggetti caricati
+
+ls()
+
+# per caricarle tutte insieme invece di una alla volta usiamo la funzione lapply che applica la funzione raster alla lista di oggetti creata
+# per prima cosa creiamo la lista
+rlist <- list.files(pattern="lst") # il pattern è un pezzo di nome comune agli oggetti che vogliamo caricare in questo caso lst
+
+lapply(rlist, raster) # applica una funzione ad una determinata lista
