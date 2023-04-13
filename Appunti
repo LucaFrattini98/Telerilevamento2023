@@ -216,4 +216,62 @@ cl <- colorRampPalette(c("blue","light blue","pink","red"))(100)
 plot(TGr, col=cl)
 
 
+# 13/04 European NO2 level, time series
+
+library(raster)
 setwd(("C:/Lab/EN"))
+
+# importing a file, due funzioni per farlo: brick (tante bande) e raster (singolo strato)
+
+EN_first <- raster("EN_0001.png")
+
+cl2 <- colorRampPalette(c("red","orange","yellow"))(100)
+
+plot(EN_first, col=cl2)
+
+# importo tutti i file
+
+EN_list <- list.files(pattern="EN")
+EN_list
+
+EN_import <- lapply(EN_list, raster)
+EN_import
+
+# compatto tutti i file in unico oggetto, tramite la funzione stack
+
+EN <- stack(EN_import)
+EN
+
+plot(EN, col=cl2)
+
+# facciamo un piccolo test di controllo 
+# per vedere se il primo file caricato è effetivamente anche il primo dello stack
+
+par(mfrow=c(1,2))
+plot(EN_first, col=cl2)
+plot(EN[[1]], col=cl2)
+
+# check 2 faccio la differneza dei pixel e dovrebbe venirmi un'immagine vuota in caso di immagine uguale
+
+difcheck <- EN_first - EN[[1]]
+difcheck
+plot(difcheck, col=cl2)
+
+dev.off()
+
+par(mfrow=c(1,2))
+
+# osservo le immagini di gennaio e marzo a confronto
+plot(EN[[1]], col=cl2)
+plot(EN[[13]], col=cl2)
+
+# faccio la differenza tra le due
+
+difEN <- EN[[1]] - EN[[13]]
+difEN
+plot(difEN, col=cl)
+
+# associo immagini di tre situazioni diverse ai tre colori RGB
+plotRGB(EN, r=1, g=7, b=13, stretch="lin")
+plotRGB(EN, r=1, g=7, b=13, stretch="hist")
+
