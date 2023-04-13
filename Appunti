@@ -171,3 +171,49 @@ ls()
 rlist <- list.files(pattern="lst") # il pattern è un pezzo di nome comune agli oggetti che vogliamo caricare in questo caso lst
 
 lapply(rlist, raster) # applica una funzione ad una determinata lista
+
+
+# 31/03 Times series
+
+library(raster)
+
+setwd("C:/Lab/Greenland")
+
+lst_2000 <- raster("lst_2000.tif")
+lst_2005 <- raster("lst_2005.tif")
+lst_2010 <- raster("lst_2010.tif")
+lst_2015 <- raster("lst_2015.tif")
+
+par(mfrow=c(2,2))
+
+plot(lst_2000)
+plot(lst_2005)
+plot(lst_2010)
+plot(lst_2015)
+
+rlist <- list.files(pattern="lst")
+
+import <- lapply(rlist, raster)
+
+# con la funzione stack unisco le 4 immagini/bande/oggetti in un solo file
+
+TGr <- stack(import)
+TGr
+plot(TGr)
+
+lapply(import, plot) # esperimento
+
+
+plotRGB(TGr, 1, 2, 3, stretch="lin")
+plotRGB(TGr, 2, 3, 4, stretch="lin")
+
+# differenza di temperatura tra l'immagine del 2000 e quella del 2005
+dift = TGr[[2]] - TGr[[1]]
+plot(dift)
+
+# per visualizzare meglio le differenze di temperatura nelle 4 immagini posso usare un plot con una colorpalette diversa dal RGB
+cl <- colorRampPalette(c("blue","light blue","pink","red"))(100)
+plot(TGr, col=cl)
+
+
+setwd(("C:/Lab/EN"))
