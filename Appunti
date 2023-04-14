@@ -275,3 +275,54 @@ plot(difEN, col=cl)
 plotRGB(EN, r=1, g=7, b=13, stretch="lin")
 plotRGB(EN, r=1, g=7, b=13, stretch="hist")
 
+
+
+# 14/04 Classification
+
+library(raster)
+setwd(("C:/Lab/"))
+
+SO <- brick("Solar_Orbiter.jpg") # Nasa Earth Observatory 
+
+plotRGB(SO, 1, 2, 3, stretch="lin")
+
+
+# classifichiamo in questo caso i livelli energetici del sole
+# per prima cosa
+# trasformiamo i valori dei colori dell'immagine in valori in un tabulato usando la funzione getValues
+singlenr <- getValues(SO)
+singlenr
+
+# usiamo la funzione kmeans per classificare questi valori
+# centroide = media di una nuvola di punti (pixel in questo caso)
+# con k-means raggruppo (clustering) i pixel di una immagine basandomi sulla media (centroide) di k classi
+kcluster <- kmeans(singlenr, centers = 3) # in questo caso raggruppiamo i pixel in 3 classi (3 centroidi)
+kcluster # tutti i valori originari sono stati riassegnati ad una delle 3 classi
+
+# Adesso riassegno questi valori classificati ad una immagine con la funzione setValues
+soclass <- setValues(SO[[1]], kcluster$cluster) # assign new values to a raster object
+
+cl <- colorRampPalette(c('yellow','black','red'))(100)
+plot(soclass, col=cl) 
+
+# nel mio caso alla classe numero 3 (colore rosso) sono associati i livelli energetici più elevati
+# class 3: highest energy level
+# class 2: medium energy level
+# class 1: lowest energy level
+
+
+# calcolo la frequenza delle 3 classi con la funzione freq, il numero di pixel in ogni classe
+frequencies <- freq(soclass)
+frequencies
+
+# calcolare la percentuale di pixel presenti nelle varie classi
+tot_pixel = 2221440
+percentages = frequencies * 100/tot_pixel
+percentages
+
+# class 1: 37,9 %
+# class 2 42 %
+# class 3: 21 %
+
+# questa non è una classificazione supervisionata, noi decidiamo solo il numero di classi ma non le soglie.
+
