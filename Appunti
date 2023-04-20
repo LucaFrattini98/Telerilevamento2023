@@ -326,3 +326,56 @@ percentages
 
 # questa non è una classificazione supervisionata, noi decidiamo solo il numero di classi ma non le soglie.
 
+# 20/04 Classification
+
+
+library(raster)
+setwd(("C:/Lab/"))
+
+GC <- brick("Grand_Canyon.jpg")
+GC
+
+plotRGB(GC, 1,2,3, stretch="lin")
+
+# in caso di immagine molto pesante, possiamo fare un ritaglio di immagine:
+# la funzione per ritgliare l'immagine è crop
+
+GCC <- crop(GC, drawExtent()) # in questo caso il ritaglio verrà fatto a mano sull'imagine con drawExtent()
+
+# faccio correre la funzione di sopra e clicco il primo vertice in alto a sinistra
+# e il secondo in basso a destra ritagliando l'immagine, dopodichè plotto la nuova immagine
+
+plotRGB(GCC, 1,2,3, stretch="lin")
+
+
+ncell(GCC) # mi dice il numero di pixel di una immagine
+
+# classifichiamo l'immagine in base alla tipologia di roccia
+
+pxlvalues <- getValues(GCC)
+pxlvalues
+
+kcluster_GCC <- kmeans(pxlvalues, centers = 6) # 6 classi
+kcluster_GCC
+
+GCC_Class <- setValues(GCC[[1]], kcluster_GCC$cluster)
+
+par(mfrow=c(1,2))
+
+plot(GCC_Class)
+plotRGB(GCC, 1,2,3, stretch="lin")
+
+# class 1: Shadows
+# class 2: clouds
+# class 3: stone type 1
+# class 4: stone type 2
+# class 5: stone type 3
+# class 6: stone type 4
+
+frequencies <- freq(GCC_Class)
+frequencies
+
+total = ncell(GCC_Class)
+
+percentages <- (frequencies * 100)/ total
+percentages
