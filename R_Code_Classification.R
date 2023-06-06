@@ -1,15 +1,5 @@
 # Classification of remote sensing data via RStoolbox
 
-# First of all install package devtools
-install.packages("devtools")
-library(devtools)
-
-devtools::install_github("bleutner/RStoolbox")
-library(bleutner/RStoolbox)
-
-#...........................................................
-
-
 library(raster)
 # install.packages("RStoolbox")
 # library(RStoolbox)
@@ -82,5 +72,3 @@ plot(gcclass, col=cl)
 frequencies <- freq(gcclass)
 tot = 58076148
 percentages = frequencies * 100 /  tot
-
-# Exercise: classify the map with 4 classes
